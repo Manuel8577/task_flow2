@@ -1,0 +1,382 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Flow | Panel de control</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+
+    <style>
+        body {
+            background: #f4f6fb;
+            font-family: 'Segoe UI', sans-serif;
+            color: #202b3c;
+        }
+
+        .sidebar {
+            background: #17243b;
+            min-height: 100vh;
+            color: white;
+            padding: 30px 20px;
+        }
+
+        .brand {
+            font-size: 25px;
+            font-weight: 800;
+            margin-bottom: 45px;
+        }
+
+        .brand span {
+            color: #60a5fa;
+        }
+
+        .nav-link {
+            color: #b8c4d8;
+            padding: 13px;
+            border-radius: 10px;
+            margin-bottom: 8px;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background: #263956;
+            color: white;
+        }
+
+        .main-content {
+            padding: 35px;
+        }
+
+        .welcome {
+            font-size: 28px;
+            font-weight: 750;
+        }
+
+        .subtitle {
+            color: #8995a8;
+        }
+
+        .stat-card, .project-card, .task-card {
+            background: white;
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 4px 18px rgba(30, 50, 80, .05);
+        }
+
+        .stat-card {
+            padding: 22px;
+            height: 100%;
+        }
+
+        .stat-icon {
+            width: 45px;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            font-size: 21px;
+        }
+
+        .project-card {
+            padding: 22px;
+            height: 100%;
+            transition: .2s;
+        }
+
+        .project-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(30, 50, 80, .1);
+        }
+
+        .section-title {
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .task-card {
+            padding: 18px 22px;
+            margin-bottom: 12px;
+        }
+
+        .priority {
+            font-size: 12px;
+            padding: 6px 11px;
+            border-radius: 20px;
+        }
+
+        .priority-Alta {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        .priority-Media {
+            background: #fef3c7;
+            color: #b45309;
+        }
+
+        .priority-Baja {
+            background: #dcfce7;
+            color: #15803d;
+        }
+
+        .btn-primary {
+            background: #2563eb;
+            border: none;
+            border-radius: 9px;
+            padding: 11px 18px;
+        }
+
+        .empty-state {
+            padding: 35px;
+            text-align: center;
+            color: #8995a8;
+        }
+
+        @media (max-width: 767px) {
+            .sidebar {
+                min-height: auto;
+                padding: 15px;
+            }
+
+            .brand {
+                margin-bottom: 15px;
+            }
+
+            .main-content {
+                padding: 20px 14px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container-fluid">
+    <div class="row">
+
+        <!-- MENU LATERAL -->
+        <aside class="col-md-2 sidebar">
+
+            <div class="brand">
+                <i class="bi bi-kanban"></i>
+                Task<span>Flow</span>
+            </div>
+
+            <p class="text-uppercase small text-secondary">Menú principal</p>
+
+            <nav class="nav flex-column">
+                <a href="/" class="nav-link active">
+                    <i class="bi bi-grid me-2"></i> Dashboard
+                </a>
+
+                <a href="#proyectos" class="nav-link">
+                    <i class="bi bi-folder me-2"></i> Proyectos
+                </a>
+
+                <a href="#tareas" class="nav-link">
+                    <i class="bi bi-check2-square me-2"></i> Mis tareas
+                </a>
+
+                <a href="{{ url_for('crear_tarea_web') }}" class="nav-link">
+                    <i class="bi bi-plus-circle me-2"></i> Nueva tarea
+                </a>
+            </nav>
+
+            <div class="mt-5 pt-5 text-secondary small">
+                Sistema de gestión<br>
+                Task Flow © 2026
+            </div>
+
+        </aside>
+
+
+        <!-- CONTENIDO PRINCIPAL -->
+        <main class="col-md-10 main-content">
+
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
+
+                <div>
+                    <h1 class="welcome">Panel de control</h1>
+                    <p class="subtitle mb-0">
+                        Bienvenido a tu espacio de trabajo.
+                    </p>
+                </div>
+
+                <a href="{{ url_for('crear_tarea_web') }}" class="btn btn-primary">
+                    <i class="bi bi-plus-lg me-2"></i> Nueva tarea
+                </a>
+
+            </div>
+
+
+            <!-- ESTADISTICAS -->
+            <div class="row g-3 mb-5">
+
+                <div class="col-md-4">
+                    <div class="stat-card">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <p class="subtitle mb-2">Proyectos registrados</p>
+                                <h2 class="fw-bold">{{ proyectos|length }}</h2>
+                            </div>
+                            <div class="stat-icon bg-primary-subtle text-primary">
+                                <i class="bi bi-folder2-open"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="stat-card">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <p class="subtitle mb-2">Tareas pendientes</p>
+                                <h2 class="fw-bold">{{ tareas|length }}</h2>
+                            </div>
+                            <div class="stat-icon bg-warning-subtle text-warning">
+                                <i class="bi bi-clock-history"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="stat-card">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <p class="subtitle mb-2">Estado del sistema</p>
+                                <h5 class="fw-bold mt-2">En funcionamiento</h5>
+                            </div>
+                            <div class="stat-icon bg-success-subtle text-success">
+                                <i class="bi bi-check-circle"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+
+            <!-- PROYECTOS -->
+            <section id="proyectos" class="mb-5">
+
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h4 class="section-title mb-0">Mis proyectos</h4>
+                    <span class="subtitle small">Tus espacios de trabajo</span>
+                </div>
+
+                <div class="row g-3">
+
+                    {% for proyecto in proyectos %}
+
+                    <div class="col-md-4">
+                        <div class="project-card">
+
+                            <div class="d-flex justify-content-between mb-3">
+                                <div class="stat-icon bg-primary-subtle text-primary">
+                                    <i class="bi bi-folder"></i>
+                                </div>
+
+                                <span class="badge bg-success-subtle text-success">
+                                    {{ proyecto.estado }}
+                                </span>
+                            </div>
+
+                            <h5 class="fw-bold">{{ proyecto.nombre }}</h5>
+
+                            <p class="subtitle small mb-0">
+                                {{ proyecto.descripcion }}
+                            </p>
+
+                        </div>
+                    </div>
+
+                    {% else %}
+
+                    <div class="col-12">
+                        <div class="project-card empty-state">
+                            <i class="bi bi-folder-x fs-1"></i>
+                            <h5 class="mt-3">No hay proyectos registrados</h5>
+                            <p>Los proyectos aparecerán aquí.</p>
+                        </div>
+                    </div>
+
+                    {% endfor %}
+
+                </div>
+            </section>
+
+
+            <!-- TAREAS -->
+            <section id="tareas">
+
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h4 class="section-title mb-0">Mis tareas</h4>
+
+                    <a href="{{ url_for('crear_tarea_web') }}"
+                       class="text-decoration-none">
+                        Ver acciones
+                    </a>
+                </div>
+
+                {% for tarea in tareas %}
+
+                <div class="task-card">
+
+                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+
+                        <div>
+                            <h6 class="fw-bold mb-1">
+                                {{ tarea.titulo }}
+                            </h6>
+
+                            <p class="subtitle small mb-0">
+                                <i class="bi bi-calendar3 me-1"></i>
+                                Fecha límite: {{ tarea._fecha_limite }}
+                            </p>
+                        </div>
+
+                        <div class="d-flex align-items-center gap-2">
+
+                            <span class="priority priority-{{ tarea._prioridad }}">
+                                {{ tarea._prioridad }}
+                            </span>
+
+                            <span class="badge bg-secondary">
+                                {{ tarea.estado }}
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                {% else %}
+
+                <div class="task-card empty-state">
+                    <i class="bi bi-clipboard-check fs-1"></i>
+                    <h5 class="mt-3">Todo está tranquilo</h5>
+                    <p>Aún no tienes tareas pendientes.</p>
+
+                    <a href="{{ url_for('crear_tarea_web') }}"
+                       class="btn btn-primary mt-2">
+                        Crear primera tarea
+                    </a>
+                </div>
+
+                {% endfor %}
+
+            </section>
+
+        </main>
+
+    </div>
+</div>
+
+</body>
+</html>
+
